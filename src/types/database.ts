@@ -1,0 +1,3 @@
+export type AppointmentStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+
+// ... rest of existing types ...
