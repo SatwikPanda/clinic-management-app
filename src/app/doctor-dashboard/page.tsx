@@ -1153,8 +1153,11 @@ export default function DoctorDashboard() {
                         </h3>
                         {schedule?.leaves?.map((leave: any, index: number) => (
                           <div key={index} className="text-gray-600 mb-1">
-                            {new Date(leave.date).toLocaleDateString()} -{" "}
-                            {leave.reason}
+                            {new Date(leave.startDate).toLocaleDateString()} -{" "}
+                            {new Date(leave.endDate).toLocaleDateString()}
+                            <span className="ml-2 text-gray-500">
+                              ({leave.reason})
+                            </span>
                           </div>
                         ))}
                         <button
