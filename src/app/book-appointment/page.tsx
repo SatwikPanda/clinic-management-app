@@ -484,7 +484,7 @@ export default function BookAppointment() {
                         value={formData.date}
                         onChange={(e) => handleDateChange(e.target.value)}
                         min={new Date().toISOString().split('T')[0]}
-                        className={`w-full px-4 py-3 rounded-lg border-2 ${
+                        className={`w-full px-4 py-3 text-gray-700 rounded-lg border-2 ${
                           dateError ? 'border-red-300' : 'border-gray-200'
                         } focus:border-blue-600 focus:outline-none transition-colors`}
                         required
