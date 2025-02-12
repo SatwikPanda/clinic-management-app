@@ -35,7 +35,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center gap-16">
             <div className="md:w-1/2 space-y-8">
               <h1 className="text-5xl md:text-6xl font-bold leading-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent tracking-tighter">
-                Modern Healthcare for Everyone
+                Modern ENT care for Everyone
               </h1>
               <p className="text-xl text-gray-600 leading-relaxed tracking-tight">
                 Experience state-of-the-art medical care with a personal touch.
