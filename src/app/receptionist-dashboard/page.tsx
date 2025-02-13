@@ -3,16 +3,23 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { AppointmentStatus } from "@/types/database";
+import { formatTime } from "@/utils/dateUtils";
 
 export default function ReceptionistDashboard() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"today" | "upcoming" | "all">("today");
   const [searchQuery, setSearchQuery] = useState("");
+  const [doctorSchedule, setDoctorSchedule] = useState<any>(null);
+  const [scheduleLoading, setScheduleLoading] = useState(true);
 
   useEffect(() => {
     fetchAppointments();
   }, [view]);
+
+  useEffect(() => {
+    fetchDoctorSchedule();
+  }, []);
 
   const fetchAppointments = async () => {
     try {
@@ -42,6 +49,31 @@ export default function ReceptionistDashboard() {
       console.error("Error fetching appointments:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchDoctorSchedule = async () => {
+    try {
+      setScheduleLoading(true);
+      const { data: doctorData } = await supabase
+        .from('doctors')
+        .select('id')
+        .limit(1)
+        .single();
+
+      if (doctorData) {
+        const { data: schedule } = await supabase
+          .from('doctor_schedules')
+          .select('*')
+          .eq('doctor_id', doctorData.id)
+          .single();
+
+        setDoctorSchedule(schedule);
+      }
+    } catch (error) {
+      console.error("Error fetching doctor schedule:", error);
+    } finally {
+      setScheduleLoading(false);
     }
   };
 
@@ -305,6 +337,90 @@ export default function ReceptionistDashboard() {
                 </table>
               </div>
             )}
+          </div>
+
+          {/* Doctor's Schedule Section */}
+          <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Doctor's Schedule
+              </h2>
+              {scheduleLoading ? (
+                <p className="text-gray-500">Loading schedule...</p>
+              ) : (
+                <div className="space-y-4">
+                  {/* Working Hours */}
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">Working Hours</h3>
+                    <p className="text-gray-600">
+                      {doctorSchedule?.working_hours?.start || '09:00'} - {doctorSchedule?.working_hours?.end || '17:00'}
+                    </p>
+                  </div>
+
+                  {/* Break Times */}
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">Break Times</h3>
+                    <div className="space-y-1">
+                      {doctorSchedule?.breaks?.map((break_: any, index: number) => (
+                        <div key={index} className="text-gray-600">
+                          {break_.type}: {break_.start} - {break_.end}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Weekly Schedule */}
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">Weekly Schedule</h3>
+                    <div className="space-y-2">
+                      {doctorSchedule?.weekly_schedule?.map((day: any) => (
+                        <div key={day.day} className="flex justify-between items-center py-1 border-b border-gray-100">
+                          <span className="font-medium text-gray-700">{day.day}</span>
+                          <div className="text-sm text-gray-600">
+                            {day.slots.length > 0 ? (
+                              day.slots.join(", ")
+                            ) : (
+                              <span className="text-red-500">{day.status || "Closed"}</span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Leave Schedule */}
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Doctor's Leave Schedule
+              </h2>
+              {scheduleLoading ? (
+                <p className="text-gray-500">Loading leave schedule...</p>
+              ) : doctorSchedule?.leaves?.length === 0 ? (
+                <p className="text-gray-500">No upcoming leaves scheduled</p>
+              ) : (
+                <div className="space-y-4">
+                  {doctorSchedule?.leaves?.map((leave: any, index: number) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-start p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div>
+                        <div className="text-sm font-medium text-gray-900">
+                          {new Date(leave.startDate).toLocaleDateString()} - {new Date(leave.endDate).toLocaleDateString()}
+                        </div>
+                        <div className="text-sm text-gray-600 mt-1">{leave.reason}</div>
+                      </div>
+                      <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
+                        Leave
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
