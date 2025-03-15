@@ -980,17 +980,6 @@ export default function DoctorDashboard() {
                                 </p>
                               </div>
                             </div>
-                            <span
-                              className={`px-3 py-1 rounded-full text-xs font-medium
-                              ${
-                                prescription.status === "active"
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {prescription.status.charAt(0).toUpperCase() +
-                                prescription.status.slice(1)}
-                            </span>
                           </div>
                           <div className="flex gap-6 text-sm text-gray-600">
                             <div>

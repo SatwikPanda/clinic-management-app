@@ -44,8 +44,6 @@ export default function PrescriptionDetailsModal({ prescription, onClose }: Pres
           {/* Clinic Header */}
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-900">HealthCare Clinic</h1>
-            <p className="text-gray-600">123 Medical Center Drive</p>
-            <p className="text-gray-600">Phone: (555) 123-4567</p>
             <div className="mt-2 text-sm text-gray-500">
               Date: {formatDate(prescription.created_at)}
             </div>

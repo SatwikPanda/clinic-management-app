@@ -7,6 +7,7 @@ import { formatTime } from "@/utils/dateUtils";
 
 export default function ReceptionistDashboard() {
   const [appointments, setAppointments] = useState<any[]>([]);
+  const [emergencyAppointments, setEmergencyAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState<"today" | "upcoming" | "all">("today");
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,6 +21,14 @@ export default function ReceptionistDashboard() {
   useEffect(() => {
     fetchDoctorSchedule();
   }, []);
+
+  useEffect(() => {
+    // Filter emergency appointments whenever the appointments list changes
+    const emergencies = appointments.filter(
+      (apt) => apt.type === "Emergency Service"
+    );
+    setEmergencyAppointments(emergencies);
+  }, [appointments]);
 
   const fetchAppointments = async () => {
     try {
@@ -151,7 +160,7 @@ export default function ReceptionistDashboard() {
                 <button
                   onClick={() => setView("today")}
                   className="block w-full text-left px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
-                  >
+                >
                   View Today's Appointments
                 </button>
               </div>
@@ -196,6 +205,118 @@ export default function ReceptionistDashboard() {
               </div>
             </div>
           </div>
+
+          {/* Emergency Appointments Section */}
+          {emergencyAppointments.length > 0 && (
+            <div className="bg-red-50 border-l-4 border-red-500 rounded-lg shadow-md mb-8">
+              <div className="p-6">
+                <div className="flex items-center mb-4">
+                  <svg
+                    className="w-6 h-6 text-red-600 mr-2"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                  <h2 className="text-xl font-semibold text-red-800">
+                    Emergency Appointments ({emergencyAppointments.length})
+                  </h2>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead className="bg-red-100">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-red-700 uppercase">
+                          ID
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-red-700 uppercase">
+                          Patient
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-red-700 uppercase">
+                          Contact
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-red-700 uppercase">
+                          Date
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-red-700 uppercase">
+                          Time
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-red-700 uppercase">
+                          Status
+                        </th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-red-700 uppercase">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-red-200">
+                      {emergencyAppointments.map((appointment) => (
+                        <tr key={appointment.id} className="hover:bg-red-100">
+                          <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-red-900">
+                            {appointment.confirmation_id}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm text-red-800">
+                            {appointment.patient?.name}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm text-red-800">
+                            {appointment.patient?.phone}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm text-red-800">
+                            {new Date(appointment.date).toLocaleDateString()}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm text-red-800">
+                            {appointment.time}
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <span
+                              className={`px-2 py-1 text-xs font-medium rounded-full ${
+                                appointment.status === "confirmed"
+                                  ? "bg-green-100 text-green-800"
+                                  : appointment.status === "pending"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : appointment.status === "cancelled"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {appointment.status.charAt(0).toUpperCase() +
+                                appointment.status.slice(1)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap text-sm">
+                            <select
+                              value={appointment.status}
+                              onChange={(e) =>
+                                updateAppointmentStatus(
+                                  appointment.id,
+                                  e.target.value as AppointmentStatus
+                                )
+                              }
+                              className="text-sm border border-red-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-red-500"
+                              disabled={loading}
+                            >
+                              <option value="pending">Pending</option>
+                              <option value="confirmed">Confirmed</option>
+                              <option value="cancelled">Cancelled</option>
+                              <option value="completed">Completed</option>
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Appointments List */}
           <div className="bg-white rounded-lg shadow">
