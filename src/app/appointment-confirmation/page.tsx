@@ -120,7 +120,7 @@ export default function AppointmentConfirmation() {
               { label: 'Service', value: appointmentDetails.service },
               { label: 'Date', value: appointmentDetails.date },
               { label: 'Time', value: appointmentDetails.time },
-              { label: 'Doctor', value: appointmentDetails.doctor },
+              { label: 'Doctor', value: "Dr. Sanjeev Mohanty" },
             ].map((detail) => (
               <div key={detail.label} className="flex justify-between items-center">
                 <span className="text-gray-600">{detail.label}</span>
