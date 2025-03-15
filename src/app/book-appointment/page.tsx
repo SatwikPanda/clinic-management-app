@@ -353,6 +353,9 @@ export default function BookAppointment() {
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
+                      onInput={(e) => {
+                        e.currentTarget.value = e.currentTarget.value.replace(/[^A-Za-z\s]/g, "");
+                      }}
                       className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors text-gray-900"
                       placeholder="John Doe"
                       required

@@ -35,12 +35,6 @@ export default function CheckAppointment() {
     setAppointmentDetails(null);
 
     try {
-      // Check for doctor credentials
-      if (appointmentId.trim() === 'Doctor' && phoneNumber.trim() === 'Doctor@123') {
-        router.push('/doctor-dashboard');
-        return;
-      }
-
       // Query appointment from Supabase
       const { data: appointment, error } = await supabase
         .from('appointments')

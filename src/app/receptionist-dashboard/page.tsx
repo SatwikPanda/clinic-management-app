@@ -56,16 +56,16 @@ export default function ReceptionistDashboard() {
     try {
       setScheduleLoading(true);
       const { data: doctorData } = await supabase
-        .from('doctors')
-        .select('id')
+        .from("doctors")
+        .select("id")
         .limit(1)
         .single();
 
       if (doctorData) {
         const { data: schedule } = await supabase
-          .from('doctor_schedules')
-          .select('*')
-          .eq('doctor_id', doctorData.id)
+          .from("doctor_schedules")
+          .select("*")
+          .eq("doctor_id", doctorData.id)
           .single();
 
         setDoctorSchedule(schedule);
@@ -151,7 +151,7 @@ export default function ReceptionistDashboard() {
                 <button
                   onClick={() => setView("today")}
                   className="block w-full text-left px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
-                >
+                  >
                   View Today's Appointments
                 </button>
               </div>
@@ -351,36 +351,52 @@ export default function ReceptionistDashboard() {
                 <div className="space-y-4">
                   {/* Working Hours */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">Working Hours</h3>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                      Working Hours
+                    </h3>
                     <p className="text-gray-600">
-                      {doctorSchedule?.working_hours?.start || '09:00'} - {doctorSchedule?.working_hours?.end || '17:00'}
+                      {doctorSchedule?.working_hours?.start || "09:00"} -{" "}
+                      {doctorSchedule?.working_hours?.end || "17:00"}
                     </p>
                   </div>
 
                   {/* Break Times */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">Break Times</h3>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                      Break Times
+                    </h3>
                     <div className="space-y-1">
-                      {doctorSchedule?.breaks?.map((break_: any, index: number) => (
-                        <div key={index} className="text-gray-600">
-                          {break_.type}: {break_.start} - {break_.end}
-                        </div>
-                      ))}
+                      {doctorSchedule?.breaks?.map(
+                        (break_: any, index: number) => (
+                          <div key={index} className="text-gray-600">
+                            {break_.type}: {break_.start} - {break_.end}
+                          </div>
+                        )
+                      )}
                     </div>
                   </div>
 
                   {/* Weekly Schedule */}
                   <div>
-                    <h3 className="text-sm font-medium text-gray-700 mb-2">Weekly Schedule</h3>
+                    <h3 className="text-sm font-medium text-gray-700 mb-2">
+                      Weekly Schedule
+                    </h3>
                     <div className="space-y-2">
                       {doctorSchedule?.weekly_schedule?.map((day: any) => (
-                        <div key={day.day} className="flex justify-between items-center py-1 border-b border-gray-100">
-                          <span className="font-medium text-gray-700">{day.day}</span>
+                        <div
+                          key={day.day}
+                          className="flex justify-between items-center py-1 border-b border-gray-100"
+                        >
+                          <span className="font-medium text-gray-700">
+                            {day.day}
+                          </span>
                           <div className="text-sm text-gray-600">
                             {day.slots.length > 0 ? (
                               day.slots.join(", ")
                             ) : (
-                              <span className="text-red-500">{day.status || "Closed"}</span>
+                              <span className="text-red-500">
+                                {day.status || "Closed"}
+                              </span>
                             )}
                           </div>
                         </div>
@@ -409,9 +425,12 @@ export default function ReceptionistDashboard() {
                     >
                       <div>
                         <div className="text-sm font-medium text-gray-900">
-                          {new Date(leave.startDate).toLocaleDateString()} - {new Date(leave.endDate).toLocaleDateString()}
+                          {new Date(leave.startDate).toLocaleDateString()} -{" "}
+                          {new Date(leave.endDate).toLocaleDateString()}
                         </div>
-                        <div className="text-sm text-gray-600 mt-1">{leave.reason}</div>
+                        <div className="text-sm text-gray-600 mt-1">
+                          {leave.reason}
+                        </div>
                       </div>
                       <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full">
                         Leave

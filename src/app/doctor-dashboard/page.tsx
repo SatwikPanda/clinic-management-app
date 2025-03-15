@@ -836,15 +836,6 @@ export default function DoctorDashboard() {
                             <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
                               Age/Gender
                             </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
-                              Last Visit
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
-                              Condition
-                            </th>
-                            <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">
-                              Status
-                            </th>
                             <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase">
                               Actions
                             </th>
@@ -876,17 +867,6 @@ export default function DoctorDashboard() {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {patient.age} / {patient.gender}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {patient.lastVisit}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {patient.condition}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                  {patient.status}
-                                </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <button
