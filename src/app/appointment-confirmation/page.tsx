@@ -48,7 +48,7 @@ export default function AppointmentConfirmation() {
       [`Email: ${appointmentDetails.email}`, `DOB: ${appointmentDetails.date}`],
       ['', ''],
       ['Appointment Details:', ''],
-      [`Service: ${appointmentDetails.service}`, `Doctor: ${appointmentDetails.doctor}`],
+      [`Service: ${appointmentDetails.service}`, `Doctor: Dr Sanjeev Mohanty`],
       [`Date: ${appointmentDetails.date}`, `Time: ${appointmentDetails.time}`],
       ['', ''],
       ['Payment Details:', ''],
@@ -68,7 +68,7 @@ export default function AppointmentConfirmation() {
     const footer = [
       'Please arrive 10 minutes before your scheduled appointment.',
       'For any queries, contact us at: contact@healthcare.com',
-      '123 Medical Center Drive, New York, NY 10001'
+      ' '
     ];
     
     yPos = 250;

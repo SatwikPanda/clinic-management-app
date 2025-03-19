@@ -138,23 +138,6 @@ export default function NewAppointmentModal({ onClose, onSuccess }: NewAppointme
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Doctor</label>
-              <select
-                required
-                value={formData.doctor_id}
-                onChange={(e) => setFormData({ ...formData, doctor_id: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              >
-                <option value="">Select Doctor</option>
-                {doctors.map((doctor) => (
-                  <option key={doctor.id} value={doctor.id}>
-                    {doctor.name} ({doctor.specialization})
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
               <input
                 type="date"
