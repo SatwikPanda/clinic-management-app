@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-interface DaySchedule {
+export interface DaySchedule {
   day: string;
   slots: string[];
-  status?: 'Half Day' | 'Closed';
+  status?: 'Half Day' | 'Closed' | undefined;
 }
 
 interface EditScheduleModalProps {
@@ -39,9 +39,9 @@ export default function EditScheduleModal({ currentSchedule, onSave, onClose }: 
 
       await onSave(schedule);
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating schedule:', error);
-      setError(error?.message || 'Failed to update schedule');
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }

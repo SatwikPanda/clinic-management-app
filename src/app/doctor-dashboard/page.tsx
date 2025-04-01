@@ -11,22 +11,82 @@ import WorkingHoursModal from "@/components/WorkingHoursModal";
 import BreakTimeModal from "@/components/BreakTimeModal";
 import LeaveModal from "@/components/LeaveModal";
 import EditScheduleModal from "@/components/EditScheduleModal";
+import { DaySchedule } from "@/components/EditScheduleModal";
+import { Appointment } from "@/types/database";
+
+// Define necessary types
+interface Patient {
+  id: string;
+  name: string;
+  age: number;
+  gender: string;
+  email: string;
+  phone: string;
+  created_at: string;
+}
+
+interface Medication {
+  name: string;
+  dosage: string;
+  frequency: string;
+}
+
+interface Prescription {
+  id: string;
+  patient_id: string;
+  diagnosis: string;
+  medications: Medication[];
+  notes?: string;
+  created_at: string;
+  patient?: {
+    name: string;
+  };
+}
+
+interface WorkingHours {
+  start: string;
+  end: string;
+}
+
+interface BreakTime {
+  start: string;
+  end: string;
+  type: string;
+}
+
+interface Leave {
+  startDate: string;
+  endDate: string;
+  reason: string;
+}
+
+interface DoctorSchedule {
+  doctor_id?: string;
+  working_hours: WorkingHours;
+  breaks: BreakTime[];
+  leaves: Leave[];
+  weekly_schedule: DaySchedule[];
+}
+
 
 export default function DoctorDashboard() {
   const [currentView, setCurrentView] = useState("appointments");
   const [appointmentFilter, setAppointmentFilter] = useState("today");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [todayAppointments, setTodayAppointments] = useState([]);
+  const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
   const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false);
-  const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [patientsLoading, setPatientsLoading] = useState(true);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
     null
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const [prescriptionsList, setPrescriptionsList] = useState([]);
+  const [prescriptionsList, setPrescriptionsList] = useState<Prescription[]>(
+    []
+  );
   const [showNewPrescriptionModal, setShowNewPrescriptionModal] =
     useState(false);
   const [prescriptionsLoading, setPrescriptionsLoading] = useState(true);
@@ -34,8 +94,9 @@ export default function DoctorDashboard() {
   const [deletingPrescriptionId, setDeletingPrescriptionId] = useState<
     string | null
   >(null);
-  const [selectedPrescription, setSelectedPrescription] = useState(null);
-  const [schedule, setSchedule] = useState(null);
+  const [selectedPrescription, setSelectedPrescription] =
+    useState<Prescription | null>(null);
+  const [schedule, setSchedule] = useState<DoctorSchedule | null>(null);
   const [scheduleLoading, setScheduleLoading] = useState(true);
   const [showWorkingHoursModal, setShowWorkingHoursModal] = useState(false);
   const [showBreakTimeModal, setShowBreakTimeModal] = useState(false);
@@ -175,7 +236,7 @@ export default function DoctorDashboard() {
 
       if (!existingSchedule) {
         // Create default schedule
-        const defaultSchedule = {
+        const defaultSchedule: DoctorSchedule = {
           doctor_id: doctor.id,
           working_hours: { start: "09:00", end: "17:00" },
           breaks: [{ start: "13:00", end: "14:00", type: "Lunch Break" }],
@@ -260,7 +321,7 @@ export default function DoctorDashboard() {
     }
   };
 
-  const handlePrint = (prescription: any) => {
+  const handlePrint = (prescription: Prescription) => {
     const printWindow = window.open("", "_blank");
     if (printWindow) {
       printWindow.document.write(`
@@ -294,7 +355,7 @@ export default function DoctorDashboard() {
               <tbody>
                 ${prescription.medications
                   ?.map(
-                    (med: any) => `
+                    (med) => `
                   <tr>
                     <td>${med.name}</td>
                     <td>${med.dosage}</td>
@@ -318,33 +379,7 @@ export default function DoctorDashboard() {
     }
   };
 
-  const handleUpdateWorkingHours = async (newHours: any) => {
-    try {
-      const { data: doctorData } = await supabase
-        .from("doctors")
-        .select("id")
-        .limit(1)
-        .single();
-
-      const { error } = await supabase.from("doctor_schedules").upsert({
-        doctor_id: doctorData.id,
-        working_hours: newHours,
-        breaks: schedule.breaks,
-        leaves: schedule.leaves,
-        weekly_schedule: schedule.weekly_schedule,
-      });
-
-      if (error) throw error;
-      fetchSchedule();
-    } catch (error) {
-      console.error("Error updating working hours:", error);
-    }
-  };
-
-  const handleSaveWorkingHours = async (newHours: {
-    start: string;
-    end: string;
-  }) => {
+  const handleSaveWorkingHours = async (newHours: WorkingHours) => {
     try {
       const { data: doctorData, error: doctorError } = await supabase
         .from("doctors")
@@ -387,7 +422,7 @@ export default function DoctorDashboard() {
     }
   };
 
-  const handleSaveBreaks = async (newBreaks: any[]) => {
+  const handleSaveBreaks = async (newBreaks: BreakTime[]) => {
     try {
       const { data: doctorData } = await supabase
         .from("doctors")
@@ -415,7 +450,7 @@ export default function DoctorDashboard() {
     }
   };
 
-  const handleSaveLeaves = async (newLeaves: any[]) => {
+  const handleSaveLeaves = async (newLeaves: Leave[]) => {
     try {
       const { data: doctorData } = await supabase
         .from("doctors")
@@ -443,7 +478,7 @@ export default function DoctorDashboard() {
     }
   };
 
-  const handleSaveSchedule = async (newSchedule: any[]) => {
+  const handleSaveSchedule = async (newSchedule: DaySchedule[]) => {
     try {
       const { data: doctorData } = await supabase
         .from("doctors")
@@ -550,108 +585,50 @@ export default function DoctorDashboard() {
     },
   ];
 
-  const appointments = [
-    {
-      id: "APP123",
-      patient: "John Doe",
-      time: "10:00 AM",
-      date: "2024-02-20",
-      status: "Confirmed",
-    },
-    {
-      id: "APP124",
-      patient: "Jane Smith",
-      time: "11:30 AM",
-      date: "2024-02-20",
-      status: "Completed",
-    },
-    // Add more appointments as needed
-  ];
-
-  const patientRecords = [
-    {
-      id: "PT001",
-      name: "John Doe",
-      age: 35,
-      gender: "Male",
-      lastVisit: "2024-02-15",
-      condition: "Hypertension",
-      status: "Active",
-      phone: "+1 (555) 123-4567",
-      email: "john.doe@example.com",
-    },
-    {
-      id: "PT002",
-      name: "Jane Smith",
-      age: 28,
-      gender: "Female",
-      lastVisit: "2024-02-18",
-      condition: "Diabetes Type 2",
-      status: "Active",
-      phone: "+1 (555) 987-6543",
-      email: "jane.smith@example.com",
-    },
-    // Add more patient records as needed
-  ];
-
-  // Add prescriptions data
-  const prescriptions = [
-    {
-      id: "PRE001",
-      patient: "John Doe",
-      date: "2024-02-20",
-      diagnosis: "Hypertension",
-      status: "Active",
-      medications: [
-        { name: "Amlodipine", dosage: "5mg", frequency: "Once daily" },
-        { name: "Lisinopril", dosage: "10mg", frequency: "Twice daily" },
-      ],
-    },
-    {
-      id: "PRE002",
-      patient: "Jane Smith",
-      date: "2024-02-19",
-      diagnosis: "Type 2 Diabetes",
-      status: "Active",
-      medications: [
-        { name: "Metformin", dosage: "500mg", frequency: "Twice daily" },
-        { name: "Glimepiride", dosage: "2mg", frequency: "Once daily" },
-      ],
-    },
-  ];
-
-  // Add schedule data
-  const scheduleData = {
-    workingHours: { start: "09:00 AM", end: "06:00 PM" },
-    breaks: [{ start: "01:00 PM", end: "02:00 PM", type: "Lunch Break" }],
-    upcomingLeaves: [
-      { date: "2024-03-15", reason: "Conference" },
-      { date: "2024-03-25", reason: "Personal" },
-    ],
-    weeklySchedule: [
-      { day: "Monday", slots: ["09:00 AM - 01:00 PM", "02:00 PM - 06:00 PM"] },
-      { day: "Tuesday", slots: ["09:00 AM - 01:00 PM", "02:00 PM - 06:00 PM"] },
-      {
-        day: "Wednesday",
-        slots: ["09:00 AM - 01:00 PM", "02:00 PM - 06:00 PM"],
-      },
-      {
-        day: "Thursday",
-        slots: ["09:00 AM - 01:00 PM", "02:00 PM - 06:00 PM"],
-      },
-      { day: "Friday", slots: ["09:00 AM - 01:00 PM", "02:00 PM - 06:00 PM"] },
-      { day: "Saturday", slots: ["09:00 AM - 01:00 PM"], status: "Half Day" },
-      { day: "Sunday", slots: [], status: "Closed" },
-    ],
-  };
-
-  const handleViewDetails = (appointment: any) => {
+  const handleViewDetails = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
   };
 
   const handleNewAppointmentSuccess = () => {
     // Refresh the appointments list
     if (currentView === "appointments") {
+      const fetchAppointments = async () => {
+        try {
+          setIsLoading(true);
+          const today = new Date().toISOString().split("T")[0];
+
+          let query = supabase.from("appointments").select(`
+              *,
+              patient:patient_id(name, phone),
+              doctor:doctor_id(name)
+            `);
+
+          // Apply filters
+          switch (appointmentFilter) {
+            case "today":
+              query = query.eq("date", today);
+              break;
+            case "upcoming":
+              query = query.gt("date", today);
+              break;
+            case "past":
+              query = query.lt("date", today);
+              break;
+          }
+
+          const { data, error } = await query.order("date", {
+            ascending: appointmentFilter !== "past",
+          });
+
+          if (error) throw error;
+          setTodayAppointments(data || []);
+        } catch (error) {
+          console.error("Error fetching appointments:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
       fetchAppointments();
     }
   };
@@ -1100,11 +1077,13 @@ export default function DoctorDashboard() {
                         <h3 className="text-lg font-semibold text-gray-800 mb-2">
                           Break Time
                         </h3>
-                        {schedule?.breaks?.map((break_: any, index: number) => (
-                          <div key={index} className="text-gray-600">
-                            {break_.type}: {break_.start} - {break_.end}
-                          </div>
-                        ))}
+                        {schedule?.breaks?.map(
+                          (break_: BreakTime, index: number) => (
+                            <div key={index} className="text-gray-600">
+                              {break_.type}: {break_.start} - {break_.end}
+                            </div>
+                          )
+                        )}
                         <button
                           onClick={() => setShowBreakTimeModal(true)}
                           className="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -1117,15 +1096,17 @@ export default function DoctorDashboard() {
                         <h3 className="text-lg font-semibold text-gray-800 mb-2">
                           Upcoming Leaves
                         </h3>
-                        {schedule?.leaves?.map((leave: any, index: number) => (
-                          <div key={index} className="text-gray-600 mb-1">
-                            {new Date(leave.startDate).toLocaleDateString()} -{" "}
-                            {new Date(leave.endDate).toLocaleDateString()}
-                            <span className="ml-2 text-gray-500">
-                              ({leave.reason})
-                            </span>
-                          </div>
-                        ))}
+                        {schedule?.leaves?.map(
+                          (leave: Leave, index: number) => (
+                            <div key={index} className="text-gray-600 mb-1">
+                              {new Date(leave.startDate).toLocaleDateString()} -{" "}
+                              {new Date(leave.endDate).toLocaleDateString()}
+                              <span className="ml-2 text-gray-500">
+                                ({leave.reason})
+                              </span>
+                            </div>
+                          )
+                        )}
                         <button
                           onClick={() => setShowLeaveModal(true)}
                           className="mt-4 text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -1153,52 +1134,54 @@ export default function DoctorDashboard() {
 
                       <div className="p-6">
                         <div className="grid gap-4">
-                          {schedule?.weekly_schedule?.map((day: any) => (
-                            <div
-                              key={day.day}
-                              className="flex items-center py-3 border-b border-gray-100 last:border-0"
-                            >
-                              <div className="w-32">
-                                <span className="font-medium text-gray-900">
-                                  {day.day}
-                                </span>
-                              </div>
-                              <div className="flex-1">
-                                {day.slots.length > 0 ? (
-                                  <div className="flex flex-wrap gap-2">
-                                    {day.slots.map(
-                                      (slot: any, index: number) => (
-                                        <span
-                                          key={index}
-                                          className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm"
-                                        >
-                                          {slot}
-                                        </span>
-                                      )
-                                    )}
-                                  </div>
-                                ) : (
-                                  <span className="text-gray-500">
-                                    No slots available
+                          {schedule?.weekly_schedule?.map(
+                            (day: DaySchedule) => (
+                              <div
+                                key={day.day}
+                                className="flex items-center py-3 border-b border-gray-100 last:border-0"
+                              >
+                                <div className="w-32">
+                                  <span className="font-medium text-gray-900">
+                                    {day.day}
                                   </span>
-                                )}
-                              </div>
-                              {day.status && (
-                                <div className="ml-4">
-                                  <span
-                                    className={`px-3 py-1 rounded-full text-sm
+                                </div>
+                                <div className="flex-1">
+                                  {day.slots.length > 0 ? (
+                                    <div className="flex flex-wrap gap-2">
+                                      {day.slots.map(
+                                        (slot: string, index: number) => (
+                                          <span
+                                            key={index}
+                                            className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm"
+                                          >
+                                            {slot}
+                                          </span>
+                                        )
+                                      )}
+                                    </div>
+                                  ) : (
+                                    <span className="text-gray-500">
+                                      No slots available
+                                    </span>
+                                  )}
+                                </div>
+                                {day.status && (
+                                  <div className="ml-4">
+                                    <span
+                                      className={`px-3 py-1 rounded-full text-sm
                                     ${
                                       day.status === "Half Day"
                                         ? "bg-yellow-50 text-yellow-700"
                                         : "bg-red-50 text-red-700"
                                     }`}
-                                  >
-                                    {day.status}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          ))}
+                                    >
+                                      {day.status}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          )}
                         </div>
                       </div>
                     </div>

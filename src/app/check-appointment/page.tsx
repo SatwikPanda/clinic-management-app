@@ -4,14 +4,26 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { AppointmentStatus } from '@/types/database';
 
+
+type AppointmentDetails = {
+  id: string;
+  status: string;
+  date: string;
+  time: string;
+  doctor: string;
+  patientName: string;
+  notes?: string | null;
+};
+
+
 export default function CheckAppointment() {
   const [appointmentId, setAppointmentId] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState('');
-  const [appointmentDetails, setAppointmentDetails] = useState(null);
+  const [appointmentDetails, setAppointmentDetails] = useState<AppointmentDetails | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const getStatusColor = (status: AppointmentStatus) => {
+  const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'confirmed':
         return 'bg-green-50 border-green-200';
@@ -53,7 +65,7 @@ export default function CheckAppointment() {
 
       setAppointmentDetails({
         id: appointment.confirmation_id,
-        status: appointment.status,
+        status: appointment.status as AppointmentStatus,
         date: appointment.date,
         time: appointment.time,
         doctor: appointment.doctor.name,

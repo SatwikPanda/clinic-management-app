@@ -2,8 +2,9 @@
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import jsPDF from 'jspdf';
+import { Suspense } from 'react';
 
-export default function AppointmentConfirmation() {
+function AppointmentContent() {
   const searchParams = useSearchParams();
   
   const appointmentDetails = {
@@ -149,5 +150,13 @@ export default function AppointmentConfirmation() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AppointmentConfirmation() {
+  return (
+    <Suspense fallback={<div className="text-center text-gray-600 py-8">Loading...</div>}>
+      <AppointmentContent />
+    </Suspense>
   );
 }

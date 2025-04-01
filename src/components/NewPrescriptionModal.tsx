@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { PrescriptionStatus } from '@/types/database';
+import { Patient, PrescriptionStatus } from '@/types/database';
 
 interface NewPrescriptionModalProps {
   onClose: () => void;
@@ -15,7 +15,7 @@ interface Medication {
 
 export default function NewPrescriptionModal({ onClose, onSuccess }: NewPrescriptionModalProps) {
   const [loading, setLoading] = useState(false);
-  const [patients, setPatients] = useState<any[]>([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [medications, setMedications] = useState<Medication[]>([{ name: '', dosage: '', frequency: '' }]);
   const [formData, setFormData] = useState({
     patient_id: '',
@@ -23,16 +23,9 @@ export default function NewPrescriptionModal({ onClose, onSuccess }: NewPrescrip
     notes: '',
     status: 'active' as PrescriptionStatus
   });
-  const [doctors, setDoctors] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      // Fetch doctors first
-      const { data: doctorsData } = await supabase
-        .from('doctors')
-        .select('id, name');
-      setDoctors(doctorsData || []);
-
       // Fetch patients
       const { data: patientsData } = await supabase
         .from('patients')
@@ -109,7 +102,7 @@ export default function NewPrescriptionModal({ onClose, onSuccess }: NewPrescrip
 
       onSuccess();
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error details:', error);
     } finally {
       setLoading(false);

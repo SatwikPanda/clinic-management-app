@@ -30,9 +30,9 @@ export default function WorkingHoursModal({ currentHours, onSave, onClose }: Wor
     try {
       await onSave(hours);
       onClose();
-    } catch (error: any) {
-      console.error('Error updating hours:', error);
-      setError(error?.message || 'Failed to update working hours');
+    } catch (err: unknown) {
+      console.error('Error updating hours:', err);
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }

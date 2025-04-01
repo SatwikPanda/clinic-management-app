@@ -1,7 +1,7 @@
-import { AppointmentStatus } from '@/types/database';
+import { AppointmentStatus, Appointment } from '@/types/database';
 
 interface AppointmentDetailsModalProps {
-  appointment: any;
+  appointment: Appointment;
   onClose: () => void;
 }
 
@@ -74,7 +74,7 @@ export default function AppointmentDetailsModal({ appointment, onClose }: Appoin
               </div>
               <div>
                 <p className="text-sm text-gray-500">Doctor</p>
-                <p className="text-gray-900">{appointment.doctor?.name}</p>
+                <p className="text-gray-900">Dr Sanjeev Mohanty</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Type</p>

@@ -25,7 +25,7 @@ export default function Login() {
         setError('Invalid credentials');
       }
     } catch (error) {
-      setError('Failed to login');
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }

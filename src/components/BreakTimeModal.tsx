@@ -45,9 +45,9 @@ export default function BreakTimeModal({ currentBreaks, onSave, onClose }: Break
       
       await onSave(breaks);
       onClose();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating breaks:', error);
-      setError(error?.message || 'Failed to update breaks');
+      setError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }

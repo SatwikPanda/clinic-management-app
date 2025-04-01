@@ -1,8 +1,9 @@
+import { Medication, Prescription } from '@/types/database';
 import { useRef } from 'react';
 import { useReactToPrint } from 'react-to-print';
 
 interface PrescriptionDetailsModalProps {
-  prescription: any;
+  prescription: Prescription;
   onClose: () => void;
 }
 
@@ -10,7 +11,7 @@ export default function PrescriptionDetailsModal({ prescription, onClose }: Pres
   const componentRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+    contentRef: componentRef,
     documentTitle: `Prescription-${prescription.id}`,
     onAfterPrint: () => console.log('Printed successfully'),
     onPrintError: (error) => console.error('Print failed:', error),
@@ -23,6 +24,10 @@ export default function PrescriptionDetailsModal({ prescription, onClose }: Pres
       day: 'numeric'
     });
   };
+
+  const handleClick = () => {
+    handlePrint();
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -75,7 +80,7 @@ export default function PrescriptionDetailsModal({ prescription, onClose }: Pres
                 </tr>
               </thead>
               <tbody>
-                {prescription.medications?.map((med: any, index: number) => (
+                {prescription.medications?.map((med: Medication, index: number) => (
                   <tr key={index}>
                     <td className="px-4 py-2 border text-gray-800">{med.name}</td>
                     <td className="px-4 py-2 border text-gray-800">{med.dosage}</td>
@@ -103,7 +108,7 @@ export default function PrescriptionDetailsModal({ prescription, onClose }: Pres
                 <div className="mb-8 h-8">
                   {/* Space for signature */}
                 </div>
-                <p className="text-gray-800 font-medium">Doctor's Signature</p>
+                <p className="text-gray-800 font-medium">Doctor&apos;s Signature</p>
               </div>
             </div>
           </div>
@@ -113,7 +118,7 @@ export default function PrescriptionDetailsModal({ prescription, onClose }: Pres
         <div className="p-6 border-t border-gray-100 print:hidden">
           <div className="flex justify-end gap-4">
             <button
-              onClick={handlePrint}
+              onClick={handleClick}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
               Print Prescription

@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import { Appointment } from "types/database";
+import { Appointment, BreakTime } from "@/types/database";
 
 export const appointmentService = {
   async createAppointment(
@@ -41,6 +41,7 @@ export const appointmentService = {
 
       // Check if the doctor is on leave
       const isOnLeave = scheduleData?.leaves?.some(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (leave: any) =>
           new Date(date) >= new Date(leave.startDate) &&
           new Date(date) <= new Date(leave.endDate)
@@ -57,6 +58,7 @@ export const appointmentService = {
 
       // Check if doctor works on this day
       const daySchedule = scheduleData?.weekly_schedule?.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (day: any) => day.day === dayOfWeek
       );
 
@@ -87,6 +89,7 @@ export const appointmentService = {
 
       // Extract already booked times
       const bookedTimes =
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
         existingAppointments?.map((appointment: any) => appointment.time) || [];
 
       // Filter out already booked slots
@@ -95,9 +98,10 @@ export const appointmentService = {
       );
 
       // Apply doctor's break times
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const availableSlotsWithBreaks = availableSlots.filter((slot) => {
         // Check if the slot is during a break
-        return !scheduleData?.breaks?.some((breakTime: any) => {
+        return !scheduleData?.breaks?.some((breakTime: BreakTime) => {
           const slotTime = new Date(`2000-01-01T${slot}`);
           const breakStart = new Date(`2000-01-01T${breakTime.start}`);
           const breakEnd = new Date(`2000-01-01T${breakTime.end}`);

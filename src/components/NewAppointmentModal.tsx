@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { AppointmentStatus } from '@/types/database';
+import { AppointmentStatus, Patient } from '@/types/database';
 import { isDateAvailable } from '@/utils/appointmentUtils';
 
 interface NewAppointmentModalProps {
@@ -10,8 +10,7 @@ interface NewAppointmentModalProps {
 
 export default function NewAppointmentModal({ onClose, onSuccess }: NewAppointmentModalProps) {
   const [loading, setLoading] = useState(false);
-  const [patients, setPatients] = useState<any[]>([]);
-  const [doctors, setDoctors] = useState<any[]>([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [formData, setFormData] = useState({
     patient_id: '',
     doctor_id: '',
@@ -30,12 +29,6 @@ export default function NewAppointmentModal({ onClose, onSuccess }: NewAppointme
         .from('patients')
         .select('id, name, phone');
       setPatients(patientsData || []);
-
-      // Fetch doctors
-      const { data: doctorsData } = await supabase
-        .from('doctors')
-        .select('id, name, specialization');
-      setDoctors(doctorsData || []);
     };
 
     fetchData();

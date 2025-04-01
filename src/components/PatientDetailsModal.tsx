@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { Appointment, Patient } from '@/types/database';
 
 interface PatientDetailsModalProps {
   patientId: string;
@@ -7,8 +8,8 @@ interface PatientDetailsModalProps {
 }
 
 export default function PatientDetailsModal({ patientId, onClose }: PatientDetailsModalProps) {
-  const [patient, setPatient] = useState<any>(null);
-  const [appointments, setAppointments] = useState<any[]>([]);
+  const [patient, setPatient] = useState<Patient>();
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -69,27 +70,23 @@ export default function PatientDetailsModal({ patientId, onClose }: PatientDetai
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             <div>
               <p className="text-sm text-gray-500">Name</p>
-              <p className="text-gray-900 font-medium">{patient.name}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Age</p>
-              <p className="text-gray-900">{patient.age} years</p>
+              <p className="text-gray-900 font-medium">{patient?.name || 'N/A'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Gender</p>
-              <p className="text-gray-900">{patient.gender}</p>
+              <p className="text-gray-900">{patient?.gender || 'N/A'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Phone</p>
-              <p className="text-gray-900">{patient.phone}</p>
+              <p className="text-gray-900">{patient?.phone || 'N/A'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Email</p>
-              <p className="text-gray-900">{patient.email}</p>
+              <p className="text-gray-900">{patient?.email || 'N/A'}</p>
             </div>
             <div>
               <p className="text-sm text-gray-500">Blood Group</p>
-              <p className="text-gray-900">{patient.blood_group || 'Not specified'}</p>
+              <p className="text-gray-900">{patient?.blood_group || 'Not specified'}</p>
             </div>
           </div>
 
@@ -113,7 +110,7 @@ export default function PatientDetailsModal({ patientId, onClose }: PatientDetai
                         {new Date(appointment.date).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {appointment.doctor?.name}
+                        Dr Sanjeev Mohanty
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 text-xs rounded-full font-medium
