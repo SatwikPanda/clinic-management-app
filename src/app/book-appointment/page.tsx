@@ -8,9 +8,6 @@ import { supabase } from "@/lib/supabase"; // Update this import
 import { GenderType, BloodGroupType } from "@/types/database";
 import { isDateAvailable } from "@/utils/appointmentUtils";
 
-function generateConfirmationId() {
-  return "HC" + Math.random().toString(36).substring(2, 8).toUpperCase();
-}
 
 export default function BookAppointment() {
   const router = useRouter();
@@ -73,8 +70,8 @@ export default function BookAppointment() {
           selectedDoctor
         );
         setAvailableSlots(slots);
-      } catch (err) {
-        setError("Failed to fetch available slots");
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : String(err));
       } finally {
         setLoading(false);
       }

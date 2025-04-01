@@ -1,15 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { supabase } from "@/lib/supabase";
-import { Appointment } from "@/types/database";
 import AppointmentDetailsModal from "@/components/AppointmentDetailsModal";
 import NewAppointmentModal from "@/components/NewAppointmentModal";
 import PatientDetailsModal from "@/components/PatientDetailsModal";
 import NewPrescriptionModal from "@/components/NewPrescriptionModal";
 import PrescriptionDetailsModal from "@/components/PrescriptionDetailsModal";
-import { useReactToPrint } from "react-to-print";
 import WorkingHoursModal from "@/components/WorkingHoursModal";
 import BreakTimeModal from "@/components/BreakTimeModal";
 import LeaveModal from "@/components/LeaveModal";
@@ -19,17 +16,17 @@ export default function DoctorDashboard() {
   const [currentView, setCurrentView] = useState("appointments");
   const [appointmentFilter, setAppointmentFilter] = useState("today");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [todayAppointments, setTodayAppointments] = useState<any[]>([]);
+  const [todayAppointments, setTodayAppointments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [showNewAppointmentModal, setShowNewAppointmentModal] = useState(false);
-  const [patients, setPatients] = useState<any[]>([]);
+  const [patients, setPatients] = useState([]);
   const [patientsLoading, setPatientsLoading] = useState(true);
   const [selectedPatientId, setSelectedPatientId] = useState<string | null>(
     null
   );
   const [searchQuery, setSearchQuery] = useState("");
-  const [prescriptionsList, setPrescriptionsList] = useState<any[]>([]);
+  const [prescriptionsList, setPrescriptionsList] = useState([]);
   const [showNewPrescriptionModal, setShowNewPrescriptionModal] =
     useState(false);
   const [prescriptionsLoading, setPrescriptionsLoading] = useState(true);
@@ -37,8 +34,8 @@ export default function DoctorDashboard() {
   const [deletingPrescriptionId, setDeletingPrescriptionId] = useState<
     string | null
   >(null);
-  const [selectedPrescription, setSelectedPrescription] = useState<any>(null);
-  const [schedule, setSchedule] = useState<any>(null);
+  const [selectedPrescription, setSelectedPrescription] = useState(null);
+  const [schedule, setSchedule] = useState(null);
   const [scheduleLoading, setScheduleLoading] = useState(true);
   const [showWorkingHoursModal, setShowWorkingHoursModal] = useState(false);
   const [showBreakTimeModal, setShowBreakTimeModal] = useState(false);

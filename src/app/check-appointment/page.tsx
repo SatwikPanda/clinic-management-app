@@ -1,16 +1,14 @@
 "use client";
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { AppointmentStatus } from '@/types/database';
 
 export default function CheckAppointment() {
-  const router = useRouter();
   const [appointmentId, setAppointmentId] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [error, setError] = useState('');
-  const [appointmentDetails, setAppointmentDetails] = useState<any>(null);
+  const [appointmentDetails, setAppointmentDetails] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const getStatusColor = (status: AppointmentStatus) => {
@@ -62,7 +60,7 @@ export default function CheckAppointment() {
         patientName: appointment.patient.name,
         notes: appointment.notes
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error:', error);
       setError('Invalid confirmation ID or phone number');
     } finally {
